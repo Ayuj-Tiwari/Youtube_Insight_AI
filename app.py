@@ -152,12 +152,11 @@ if st.button("Download"):
         st.download_button("Download ZIP", f, file_name=os.path.basename(file_path))
 
 if st.button("Transcribe Audio"):
-    with st.spinner("Processing video and transcribing..."):
+    with st.spinner("Transcribing..."):
         try:
-            video_path = "downloads/video.mp4"
-            audio_path = extract_audio(video_path)
-            if not audio_path or not os.path.exists(audio_path):
-                st.error("[ERROR] Audio extraction failed. FFmpeg might be misconfigured.")
+            audio_path = "downloads/audio.mp3"
+            if not os.path.exists(audio_path):
+                st.error("[ERROR] Audio file not found. Please download as 'audio' first.")
             else:
                 transcript = transcribe_audio(audio_path)
                 db = create_faiss_index(transcript)
@@ -167,6 +166,8 @@ if st.button("Transcribe Audio"):
                 st.text_area("Transcript", transcript, height=250)
         except Exception as e:
             st.error(f"[ERROR] {str(e)}")
+st.warning("To transcribe, please download the video as 'audio' first.")
+
 
 
 if "transcript" in st.session_state:
