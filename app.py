@@ -169,7 +169,7 @@ st.warning("To transcribe, please download the video as 'audio' first.")
 
 
 if "transcript" in st.session_state:
-    question = st.text_input("Ask a Question")
+    question = st.text_input("Ask a Question about the video transcript")
     if st.button("Get Answer"):
         if qa_bot:
             with st.spinner("Thinking..."):
