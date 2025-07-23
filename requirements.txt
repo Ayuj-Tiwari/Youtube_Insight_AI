@@ -4,6 +4,6 @@ moviepy
 whisper
 transformers
 torch
+sentence-transformers
 langchain
 faiss-cpu
-sentence-transformers
