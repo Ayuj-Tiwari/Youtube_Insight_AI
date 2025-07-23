@@ -38,17 +38,10 @@ def download_media(url, media_type):
         output_path = "downloads/video.mp4" if media_type == "video" else "downloads/audio.mp3"
 
         ydl_opts = {
-            "format": "best[ext=mp4]/best" if media_type == "video" else "bestaudio",
+            "format": "best[ext=mp4]/best" if media_type == "video" else "bestaudio[ext=m4a]/bestaudio",
             "outtmpl": output_path,
             "quiet": True,
-            "postprocessors": [{
-                "key": "FFmpegExtractAudio",
-                "preferredcodec": "mp3",
-                "preferredquality": "192"
-            }] if media_type == "audio" else None
         }
-
-        ydl_opts = {k: v for k, v in ydl_opts.items() if v is not None}
 
         with yt_dlp.YoutubeDL(ydl_opts) as ydl:
             ydl.download([url])
@@ -61,6 +54,7 @@ def download_media(url, media_type):
         return zip_path, "✅ File downloaded successfully (zipped)."
     except Exception as e:
         return None, f"[ERROR] {str(e)}"
+
 
 import subprocess
 
@@ -147,9 +141,13 @@ media_type = st.radio("Choose download type", ["video", "audio"])
 if st.button("Download"):
     with st.spinner("Downloading..."):
         file_path, status = download_media(url, media_type)
-    st.success(status)
-    with open(file_path, "rb") as f:
-        st.download_button("Download ZIP", f, file_name=os.path.basename(file_path))
+    
+    if file_path is not None:
+        st.success(status)
+        with open(file_path, "rb") as f:
+            st.download_button("Download ZIP", f, file_name=os.path.basename(file_path))
+    else:
+        st.error(status)
 
 if st.button("Transcribe Audio"):
     with st.spinner("Transcribing..."):
