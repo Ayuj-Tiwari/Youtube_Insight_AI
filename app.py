@@ -64,20 +64,24 @@ def download_media(url, media_type):
 
 import subprocess
 
-def extract_audio(video_path, output_audio_path="audio.mp3"):
+def extract_audio(video_path, output_audio_path="downloads/audio.mp3"):
     try:
         command = [
-            "ffmpeg", "-i", video_path,
+            "ffmpeg", "-y", "-i", video_path,
             "-vn",  # no video
             "-acodec", "libmp3lame",
             "-ab", "192k",
             output_audio_path
         ]
         subprocess.run(command, check=True)
-        return output_audio_path
-    except subprocess.CalledProcessError as e:
-        print(f"Error during audio extraction: {e}")
+        if os.path.exists(output_audio_path):
+            return output_audio_path
+        else:
+            raise FileNotFoundError("FFmpeg did not produce the audio file.")
+    except Exception as e:
+        print(f"[extract_audio ERROR] {e}")
         return None
+
 
 
 def transcribe_audio(audio_path):
@@ -152,14 +156,18 @@ if st.button("Transcribe Audio"):
         try:
             video_path = "downloads/video.mp4"
             audio_path = extract_audio(video_path)
-            transcript = transcribe_audio(audio_path)
-            db = create_faiss_index(transcript)
-            qa_bot = build_qa_bot(db)
-            st.session_state["transcript"] = transcript
-            st.success("Transcription completed!")
-            st.text_area("Transcript", transcript, height=250)
+            if not audio_path or not os.path.exists(audio_path):
+                st.error("[ERROR] Audio extraction failed. FFmpeg might be misconfigured.")
+            else:
+                transcript = transcribe_audio(audio_path)
+                db = create_faiss_index(transcript)
+                qa_bot = build_qa_bot(db)
+                st.session_state["transcript"] = transcript
+                st.success("Transcription completed!")
+                st.text_area("Transcript", transcript, height=250)
         except Exception as e:
             st.error(f"[ERROR] {str(e)}")
+
 
 if "transcript" in st.session_state:
     question = st.text_input("Ask a Question")
