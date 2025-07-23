@@ -1,0 +1,9 @@
+streamlit
+yt-dlp
+moviepy
+whisper
+transformers
+torch
+langchain
+faiss-cpu
+sentence-transformers
