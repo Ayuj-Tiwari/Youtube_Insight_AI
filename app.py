@@ -158,7 +158,7 @@ if st.button("Transcribe Audio"):
             else:
                 transcript = transcribe_audio(audio_path)
                 db = create_faiss_index(transcript)
-                qa_bot = build_qa_bot(db)
+                st.session_state["qa_bot"] = build_qa_bot(db)
                 st.session_state["transcript"] = transcript
                 st.success("Transcription completed!")
                 st.text_area("Transcript", transcript, height=250)
@@ -169,11 +169,13 @@ st.warning("To transcribe, please download the video as 'audio' first.")
 
 
 if "transcript" in st.session_state:
-    question = st.text_input("Ask a Question about the video transcript")
+    question = st.text_input("Ask a Question")
     if st.button("Get Answer"):
-        if qa_bot:
+        if "qa_bot" in st.session_state:
             with st.spinner("Thinking..."):
-                answer = qa_bot.run(question)
+                answer = st.session_state["qa_bot"].run(question)
             st.text_area("Answer", answer, height=200)
         else:
             st.warning("Please transcribe a video first.")
+st.text_area("Transcript", st.session_state["transcript"], height=250)
+
