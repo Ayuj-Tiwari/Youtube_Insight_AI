@@ -177,5 +177,4 @@ if "transcript" in st.session_state:
             st.text_area("Answer", answer, height=200)
         else:
             st.warning("Please transcribe a video first.")
-st.text_area("Transcript", st.session_state["transcript"], height=250)
 
