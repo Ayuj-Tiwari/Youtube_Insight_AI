@@ -4,7 +4,7 @@ import whisper
 import zipfile
 import streamlit as st
 
-from moviepy.editor import VideoFileClip
+#from moviepy.editor import VideoFileClip
 from urllib.parse import urlparse, parse_qs
 
 from langchain.embeddings import HuggingFaceEmbeddings
@@ -62,10 +62,23 @@ def download_media(url, media_type):
     except Exception as e:
         return None, f"[ERROR] {str(e)}"
 
-def extract_audio(video_path, output_audio_path="downloads/audio.mp3"):
-    clip = VideoFileClip(video_path)
-    clip.audio.write_audiofile(output_audio_path)
-    return output_audio_path
+import subprocess
+
+def extract_audio(video_path, output_audio_path="audio.mp3"):
+    try:
+        command = [
+            "ffmpeg", "-i", video_path,
+            "-vn",  # no video
+            "-acodec", "libmp3lame",
+            "-ab", "192k",
+            output_audio_path
+        ]
+        subprocess.run(command, check=True)
+        return output_audio_path
+    except subprocess.CalledProcessError as e:
+        print(f"Error during audio extraction: {e}")
+        return None
+
 
 def transcribe_audio(audio_path):
     model = whisper.load_model("base")
