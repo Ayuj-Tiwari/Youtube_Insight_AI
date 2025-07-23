@@ -7,5 +7,3 @@ sentence-transformers
 gradio
 yt_dlp
 pytube
-ffmpeg-python
-ffmpeg
