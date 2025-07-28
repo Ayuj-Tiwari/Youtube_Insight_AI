@@ -90,6 +90,11 @@ def create_faiss_index(transcript_text):
     index = FAISS.from_documents(docs, embeddings)
     return index
 
+from langchain_community.chat_models import ChatOpenAI
+from langchain.prompts import PromptTemplate
+from langchain.chains import RetrievalQA
+from langchain.chains.question_answering import load_qa_chain
+
 def build_qa_bot(index):
     retriever = index.as_retriever(top_k=6)
 
@@ -113,21 +118,25 @@ Answer:"""
         template=prompt_template
     )
 
-    hf_pipeline = pipeline(
-        "text2text-generation",
-        model="MBZUAI/LaMini-Flan-T5-783M",
-        tokenizer="MBZUAI/LaMini-Flan-T5-783M",
-        max_length=1024,
-        repetition_penalty=1.2,
-        min_length=100,
-        temperature=0.9,
+    # Get the OpenRouter key from Streamlit secrets or env
+    openrouter_api_key = os.getenv("OPENROUTER_API_KEY")  # Store this in Streamlit Secrets
+
+    llm = ChatOpenAI(
+        model="deepseek-chat",
+        openai_api_key=openrouter_api_key,
+        openai_api_base="https://openrouter.ai/api/v1",
+        default_headers={
+            "HTTP-Referer": "https://youtubeinsightai.streamlit.app/",  # <- Replace with your actual Streamlit app URL
+            "X-Title": "YouTube Insight AI",
+        },
+        temperature=0.7,
+        max_tokens=1024
     )
 
-    llm = HuggingFacePipeline(pipeline=hf_pipeline)
     chain = load_qa_chain(llm, chain_type="stuff", prompt=prompt)
-
     qa = RetrievalQA(combine_documents_chain=chain, retriever=retriever, return_source_documents=False)
     return qa
+
 
 
 # ----------- Streamlit UI -----------
