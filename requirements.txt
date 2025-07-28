@@ -7,3 +7,4 @@ sentence-transformers
 gradio
 yt_dlp
 pytube
+openai
