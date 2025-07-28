@@ -118,22 +118,15 @@ Answer:"""
         template=prompt_template
     )
 
-    # Get the OpenRouter key from Streamlit secrets or env
-    openrouter_api_key = os.getenv("OPENROUTER_API_KEY")  # Store this in Streamlit Secrets
-
     llm = ChatOpenAI(
-        model="deepseek-chat",
-        openai_api_key=openrouter_api_key,
-        openai_api_base="https://openrouter.ai/api/v1",
-        default_headers={
-            "HTTP-Referer": "https://youtubeinsightai.streamlit.app/",  # <- Replace with your actual Streamlit app URL
-            "X-Title": "YouTube Insight AI",
-        },
+        base_url="https://openrouter.ai/api/v1",
+        api_key=os.getenv("OPENROUTER_API_KEY"),
+        model="deepseek-chat",  # or "deepseek-coder" if desired
         temperature=0.7,
-        max_tokens=1024
     )
 
     chain = load_qa_chain(llm, chain_type="stuff", prompt=prompt)
+
     qa = RetrievalQA(combine_documents_chain=chain, retriever=retriever, return_source_documents=False)
     return qa
 
