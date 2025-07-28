@@ -90,10 +90,11 @@ def create_faiss_index(transcript_text):
     index = FAISS.from_documents(docs, embeddings)
     return index
 
-from langchain_community.chat_models import ChatOpenAI
+from transformers import pipeline
+from langchain_community.llms import HuggingFacePipeline
 from langchain.prompts import PromptTemplate
-from langchain.chains import RetrievalQA
 from langchain.chains.question_answering import load_qa_chain
+from langchain.chains import RetrievalQA
 
 def build_qa_bot(index):
     retriever = index.as_retriever(top_k=6)
@@ -118,17 +119,17 @@ Answer:"""
         template=prompt_template
     )
 
-    print("API Key loaded:", os.getenv("OPENROUTER_API_KEY") is not None)
-
-
-    llm = ChatOpenAI(
-        base_url="https://openrouter.ai/api/v1",
-        api_key=os.getenv("OPENROUTER_API_KEY"),
-        model="deepseek/deepseek-r1:free",  # or "deepseek-coder" if desired
-        
+    hf_pipeline = pipeline(
+        "text2text-generation",
+        model="MBZUAI/LaMini-Flan-T5-783M",
+        tokenizer="MBZUAI/LaMini-Flan-T5-783M",
+        max_length=1024,
+        repetition_penalty=1.2,
+        min_length=100,
+        temperature=0.9,
     )
-    print(llm.invoke("What is the capital of France?"))
 
+    llm = HuggingFacePipeline(pipeline=hf_pipeline)
     chain = load_qa_chain(llm, chain_type="stuff", prompt=prompt)
 
     qa = RetrievalQA(combine_documents_chain=chain, retriever=retriever, return_source_documents=False)
