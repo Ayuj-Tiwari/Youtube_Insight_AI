@@ -51,7 +51,7 @@ def download_media(url, media_type):
         with zipfile.ZipFile(zip_path, 'w') as zipf:
             zipf.write(output_path, arcname=os.path.basename(output_path))
 
-        return zip_path, "✅ File downloaded successfully (zipped)."
+        return zip_path, "✅ File retrieved successfully (zipped)."
     except Exception as e:
         return None, f"[ERROR] {str(e)}"
 
