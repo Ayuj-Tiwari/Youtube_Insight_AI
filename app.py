@@ -118,12 +118,16 @@ Answer:"""
         template=prompt_template
     )
 
+    print("API Key loaded:", os.getenv("OPENROUTER_API_KEY") is not None)
+
+
     llm = ChatOpenAI(
         base_url="https://openrouter.ai/api/v1",
         api_key=os.getenv("OPENROUTER_API_KEY"),
         model="deepseek/deepseek-r1:free",  # or "deepseek-coder" if desired
-        temperature=0.7,
+        
     )
+    print(llm.invoke("What is the capital of France?"))
 
     chain = load_qa_chain(llm, chain_type="stuff", prompt=prompt)
 
