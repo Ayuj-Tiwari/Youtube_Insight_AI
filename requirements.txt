@@ -8,3 +8,4 @@ gradio
 yt_dlp
 pytube
 openai
+langchain-openai
