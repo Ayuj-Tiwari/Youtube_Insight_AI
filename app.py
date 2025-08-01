@@ -34,24 +34,25 @@ def clean_youtube_url(url):
 
 import traceback
 
+import traceback
+
 def download_media(url, media_type):
     try:
         url = clean_youtube_url(url)
-        output_path = "downloads/video.mp4" if media_type == "video" else "downloads/audio.mp3"
+        output_path = f"downloads/{'video.mp4' if media_type=='video' else 'audio.m4a'}"
 
         ydl_opts = {
-            "format": "bestvideo+bestaudio/best" if media_type == "video" else "bestaudio[ext=m4a]/bestaudio",
+            "format": "bestaudio[ext=m4a]/bestaudio" if media_type == "audio" else "best[ext=mp4]/best",
             "outtmpl": output_path,
             "quiet": True,
             "noplaylist": True,
-            "merge_output_format": "mp4" if media_type == "video" else "m4a",
             "headers": {
-                "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/115.0.0.0 Safari/537.36",
-                "Accept-Language": "en-US,en;q=0.9",
-                "Referer": "https://www.youtube.com"
-            },
-            # Optional: Uncomment below if you're using a cookies.txt file
-            # "cookiefile": "cookies.txt",
+                "User-Agent": (
+                    "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 "
+                    "(KHTML, like Gecko) Chrome/115.0.0.0 Safari/537.36"
+                ),
+                "Referer": "https://www.youtube.com/"
+            }
         }
 
         with yt_dlp.YoutubeDL(ydl_opts) as ydl:
@@ -62,7 +63,7 @@ def download_media(url, media_type):
         with zipfile.ZipFile(zip_path, 'w') as zipf:
             zipf.write(output_path, arcname=os.path.basename(output_path))
 
-        return zip_path, "✅ File retrieved successfully (zipped)."
+        return zip_path, "✅ File downloaded successfully (zipped)."
 
     except Exception as e:
         traceback.print_exc()
