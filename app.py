@@ -46,19 +46,12 @@ def download_media(url, media_type):
             "outtmpl": output_path,
             "quiet": True,
             "noplaylist": True,
-            "headers": {
-                "User-Agent": (
-                    "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 "
-                    "(KHTML, like Gecko) Chrome/115.0.0.0 Safari/537.36"
-                ),
-                "Referer": "https://www.youtube.com/"
-            }
+            "cookiefile": "cookies.txt"
         }
 
         with yt_dlp.YoutubeDL(ydl_opts) as ydl:
             ydl.download([url])
 
-        # Zip the downloaded file
         zip_path = output_path + ".zip"
         with zipfile.ZipFile(zip_path, 'w') as zipf:
             zipf.write(output_path, arcname=os.path.basename(output_path))
@@ -66,7 +59,6 @@ def download_media(url, media_type):
         return zip_path, "✅ File downloaded successfully (zipped)."
 
     except Exception as e:
-        traceback.print_exc()
         return None, f"[ERROR] {str(e)}"
 
 
