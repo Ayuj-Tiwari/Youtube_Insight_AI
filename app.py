@@ -21,6 +21,9 @@ from langchain.chains.question_answering import load_qa_chain
 os.makedirs("downloads", exist_ok=True)
 qa_bot = None
 
+with open("cookies.txt", "w") as f:
+    f.write(st.secrets["cookies"])
+
 def clean_youtube_url(url):
     try:
         parsed_url = urlparse(url)
