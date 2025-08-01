@@ -55,6 +55,9 @@ def download_media(url, media_type):
         with yt_dlp.YoutubeDL(ydl_opts) as ydl:
             ydl.download([url])
 
+        if media_type == "audio":
+            ensure_mp3_format(output_path, "downloads/audio.mp3")
+
         zip_path = output_path + ".zip"
         with zipfile.ZipFile(zip_path, 'w') as zipf:
             zipf.write(output_path, arcname=os.path.basename(output_path))
@@ -63,6 +66,21 @@ def download_media(url, media_type):
 
     except Exception as e:
         return None, f"[ERROR] {str(e)}"
+        
+def ensure_mp3_format(audio_input_path, audio_output_path="downloads/audio.mp3"):
+    try:
+        command = [
+            "ffmpeg", "-y", "-i", audio_input_path,
+            "-vn",
+            "-acodec", "libmp3lame",
+            "-ab", "192k",
+            audio_output_path
+        ]
+        subprocess.run(command, check=True)
+        return audio_output_path
+    except Exception as e:
+        print(f"[ensure_mp3_format ERROR] {e}")
+        return None
 
 
 
