@@ -240,7 +240,7 @@ st.markdown("### ❓ Ask a Question About the Video")
 question = st.text_input("Your Question")
 if st.button("Get Answer"):
     if "qa_bot" in st.session_state:
-        with st.spinner("Thinking...may take a while as I don't have 45B dollar funding like OpenAI"):
+        with st.spinner("Thinking...may take a while as I don't have a 45 billion dollar funding like OpenAI"):
             answer = st.session_state["qa_bot"].run(question)
         st.text_area("Answer", answer, height=200)
     else:
