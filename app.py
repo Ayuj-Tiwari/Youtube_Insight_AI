@@ -171,7 +171,7 @@ Answer:"""
 st.set_page_config(page_title="YouTube Insight AI", layout="centered")
 st.title("🎥 YouTube Insight AI")
 
-st.markdown("⚠️ **YouTube URLs may fail due to access restrictions. Please try uploading your own video if you face errors.**")
+st.markdown("⚠️ **YouTube URLs may fail due to access restrictions. For testing purposes of the transcriber model and the Chatbot, please try uploading your own video if you face errors.**")
 
 # Option 1: Use YouTube URL
 url = st.text_input("Enter YouTube Video URL")
