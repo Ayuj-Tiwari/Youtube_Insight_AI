@@ -200,8 +200,15 @@ if uploaded_video is not None:
     extracted_audio = extract_audio(video_path)
     if extracted_audio:
         st.success("Audio extracted from uploaded video.")
+        # Save path to session state for download
+        st.session_state["uploaded_audio_path"] = extracted_audio
     else:
         st.error("Audio extraction failed.")
+
+# Allow user to download extracted audio (if available)
+if "uploaded_audio_path" in st.session_state and os.path.exists(st.session_state["uploaded_audio_path"]):
+    with open(st.session_state["uploaded_audio_path"], "rb") as f:
+        st.download_button("⬇️ Download Extracted Audio", f, file_name="extracted_audio.mp3")
 
 st.markdown("---")
 
@@ -218,19 +225,26 @@ if st.button("Transcribe Audio"):
                 st.session_state["qa_bot"] = build_qa_bot(db)
                 st.session_state["transcript"] = transcript
                 st.success("Transcription completed!")
-                st.text_area("Transcript", transcript, height=250)
         except Exception as e:
             st.error(f"[ERROR] {str(e)}")
 
-# Q&A Section
+# Always show transcript if available
 if "transcript" in st.session_state:
-    question = st.text_input("Ask a Question")
-    if st.button("Get Answer"):
-        if "qa_bot" in st.session_state:
-            with st.spinner("Thinking..."):
-                answer = st.session_state["qa_bot"].run(question)
-            st.text_area("Answer", answer, height=200)
-        else:
-            st.warning("Please transcribe a video first.")
+    st.markdown("### 📜 Transcript")
+    st.text_area("Transcript", st.session_state["transcript"], height=250)
+
+st.markdown("---")
+
+# Always show Q&A section
+st.markdown("### ❓ Ask a Question About the Video")
+question = st.text_input("Your Question")
+if st.button("Get Answer"):
+    if "qa_bot" in st.session_state:
+        with st.spinner("Thinking..."):
+            answer = st.session_state["qa_bot"].run(question)
+        st.text_area("Answer", answer, height=200)
+    else:
+        st.warning("⚠️ Please transcribe a video first to enable answering.")
+
 
 
