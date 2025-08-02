@@ -167,16 +167,19 @@ Answer:"""
 
 # ----------- Streamlit UI -----------
 
+# ----------- Streamlit UI -----------
 st.set_page_config(page_title="YouTube Insight AI", layout="centered")
 st.title("🎥 YouTube Insight AI")
 
+st.markdown("⚠️ **YouTube URLs may fail due to access restrictions. Please try uploading your own video if you face errors.**")
+
+# Option 1: Use YouTube URL
 url = st.text_input("Enter YouTube Video URL")
 
 media_type = st.radio("Choose download type", ["video", "audio"])
-if st.button("Download"):
+if st.button("Download from YouTube"):
     with st.spinner("Downloading..."):
         file_path, status = download_media(url, media_type)
-    
     if file_path is not None:
         st.success(status)
         with open(file_path, "rb") as f:
@@ -184,12 +187,31 @@ if st.button("Download"):
     else:
         st.error(status)
 
+st.markdown("---")
+
+# Option 2: Upload a local video
+uploaded_video = st.file_uploader("Or upload your own video (MP4)", type=["mp4"])
+if uploaded_video is not None:
+    video_path = os.path.join("downloads", uploaded_video.name)
+    with open(video_path, "wb") as f:
+        f.write(uploaded_video.read())
+    st.success(f"Video '{uploaded_video.name}' uploaded successfully.")
+    
+    extracted_audio = extract_audio(video_path)
+    if extracted_audio:
+        st.success("Audio extracted from uploaded video.")
+    else:
+        st.error("Audio extraction failed.")
+
+st.markdown("---")
+
+# Transcription
 if st.button("Transcribe Audio"):
     with st.spinner("Transcribing..."):
         try:
             audio_path = "downloads/audio.mp3"
             if not os.path.exists(audio_path):
-                st.error("[ERROR] Audio file not found. Please download as 'audio' first.")
+                st.error("[ERROR] Audio file not found. Please download audio or upload a video first.")
             else:
                 transcript = transcribe_audio(audio_path)
                 db = create_faiss_index(transcript)
@@ -199,10 +221,8 @@ if st.button("Transcribe Audio"):
                 st.text_area("Transcript", transcript, height=250)
         except Exception as e:
             st.error(f"[ERROR] {str(e)}")
-st.warning("To transcribe, please download the video as 'audio' first.")
 
-
-
+# Q&A Section
 if "transcript" in st.session_state:
     question = st.text_input("Ask a Question")
     if st.button("Get Answer"):
@@ -212,4 +232,5 @@ if "transcript" in st.session_state:
             st.text_area("Answer", answer, height=200)
         else:
             st.warning("Please transcribe a video first.")
+
 
