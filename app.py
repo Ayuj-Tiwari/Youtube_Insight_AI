@@ -23,7 +23,7 @@ from transformers import pipeline
 
 # ----------------- Basic setup -----------------
 st.set_page_config(page_title="YouTube Insight AI", layout="centered")
-st.title("🎥 YouTube Insight AI — Upload or (optional) YouTube URL demo")
+st.title("🎥 YouTube Insight AI ")
 
 os.makedirs("downloads", exist_ok=True)
 os.makedirs("temp_audio", exist_ok=True)
@@ -185,13 +185,12 @@ Answer:"""
 
 # ----------------- UI -----------------
 st.markdown(
-    "⚠️ **YouTube note:** Some YouTube links may fail (403 Forbidden) when downloaded from cloud servers. "
+    "⚠️ **YouTube note:** Some YouTube links may fail (403 Forbidden) due to Youtube's strict access restrictions. "
     "If you encounter download errors, upload a video file (MP4/MKV/MOV/AVI) instead — uploads always work. "
-    "If you want to test YouTube downloads with your account, add `cookies` to Streamlit Secrets (TOML). "
 )
 
 # --- Inputs: YouTube URL + buttons
-url = st.text_input("YouTube URL (optional):", placeholder="https://www.youtube.com/watch?v=...")
+url = st.text_input("Paste YouTube URL", placeholder="https://www.youtube.com/watch?v=...")
 c1, c2 = st.columns(2)
 
 with c1:
