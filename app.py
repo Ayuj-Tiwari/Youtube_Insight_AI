@@ -201,7 +201,7 @@ st.markdown("⚠️ **Note:** YouTube downloads can fail (403) because of access
             "For reliable testing of the transcriber model and the ChatBot, upload your own video file.")
 
 # Inputs
-url = st.text_input("YouTube URL (optional):")
+url = st.text_input("Paste YouTube Video URL")
 col1, col2 = st.columns(2)
 
 with col1:
