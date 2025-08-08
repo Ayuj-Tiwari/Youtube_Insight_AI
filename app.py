@@ -211,6 +211,7 @@ if "uploaded_audio_path" in st.session_state and os.path.exists(st.session_state
         st.download_button("⬇️ Download Extracted Audio", f, file_name="extracted_audio.mp3")
 
 st.markdown("---")
+st.markdown("To Transcribe Audio, please download the audio of the video")
 
 # Transcription
 if st.button("Transcribe Audio"):
