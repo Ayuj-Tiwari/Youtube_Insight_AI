@@ -198,7 +198,7 @@ Answer:"""
 
 # ----------------- UI -----------------
 st.markdown("⚠️ **Note:** YouTube downloads can fail (403) because of access restrictions. "
-            "For reliable testing, upload your own video file. If you understand the cookie workaround you can add `cookies` to Streamlit Secrets (TOML) — see README.")
+            "For reliable testing of the transcriber model and the ChatBot, upload your own video file.")
 
 # Inputs
 url = st.text_input("YouTube URL (optional):")
